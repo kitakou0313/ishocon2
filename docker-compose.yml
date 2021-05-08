@@ -1,0 +1,26 @@
+version: '3.0'
+services:
+  app:
+    build: 
+      context: .
+      dockerfile: ./docker/app/python/Dockerfile
+    command: tail -f /dev/null
+    volumes:
+      - storage_app:/var/lib/mysql
+      - ./webapp:/home/ishocon/webapp
+    ports:
+      - "443:443"
+
+  bench:
+    image: showwin/ishocon2_bench:latest
+    command: tail -f /dev/null
+    volumes:
+      - storage_bench:/var/lib/mysql
+    links:
+      - app
+    environment: 
+      - TARGET=app
+
+volumes:
+  storage_bench:
+  storage_app:
