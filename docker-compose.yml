@@ -3,7 +3,7 @@ services:
   app:
     build: 
       context: .
-      dockerfile: ./docker/app/python/Dockerfile
+      dockerfile: ./docker/app/go/Dockerfile
     command: tail -f /dev/null
     volumes:
       - storage_app:/var/lib/mysql
