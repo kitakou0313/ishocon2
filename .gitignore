@@ -44,3 +44,5 @@ __pycache__/
 .DS_Store
 .python-version
 .idea
+
+webapp
