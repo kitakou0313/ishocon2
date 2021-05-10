@@ -6,8 +6,8 @@ loginApp:
 up:
 	@docker-compose up -d
 
-.PHONY: down
-down:
+.PHONY: stop
+stop:
 	@docker-compose stop
 
 .PHONY: upWebApp
