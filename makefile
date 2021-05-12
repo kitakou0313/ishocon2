@@ -27,3 +27,7 @@ bench:
 .PHONY: connDB
 connDB:
 	@docker exec -it -w /home/ishocon/webapp/go ishocon2-master_app_1 mysql -u ishocon -p -D ishocon2
+
+.PHONY: dumpSchema
+dumpSchema:
+	@docker exec -it -w /home/ishocon/webapp/go ishocon2-master_app_1 mysqldump -u ishocon --no-data ishocon2 -p > dbSchema.sql
