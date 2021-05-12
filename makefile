@@ -23,3 +23,7 @@ buildWebApp:
 .PHONY: bench
 bench:
 	@docker exec -it ishocon2-master_bench_1 ./benchmark --workload ${WORKLOAD} --ip app:443
+
+.PHONY: connDB
+connDB:
+	@docker exec -it -w /home/ishocon/webapp/go ishocon2-master_app_1 mysql -u ishocon -p -D ishocon2
