@@ -48,7 +48,7 @@ CREATE TABLE `users` (
   `votes` int(4) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `mynumber` (`mynumber`),
-  KEY `user__name_address_mynumber_ind` (`name`,`address`,`mynumber`)
+  KEY `usermynum_name_add_ind` (`mynumber`,`name`,`address`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4000001 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -66,7 +66,7 @@ CREATE TABLE `votes` (
   `keyword` text NOT NULL,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=608272 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=680246 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -78,4 +78,4 @@ CREATE TABLE `votes` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-05-16  9:37:10
+-- Dump completed on 2021-05-16  9:58:21
