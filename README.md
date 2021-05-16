@@ -11,3 +11,9 @@ mysql> select table_name, table_rows from information_schema.TABLES where table_
 +------------+------------+
 3 rows in set (0.00 sec)
 ```
+
+最新スコア
+
+'''
+2021/05/16 10:02:42 {"score": 14170, "success": 11610, "failure": 0}
+'''
