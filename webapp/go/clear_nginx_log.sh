@@ -1,0 +1,1 @@
+cp /dev/null /var/log/nginx/access.log
