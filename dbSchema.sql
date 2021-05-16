@@ -1,4 +1,4 @@
-Enter password: 
+mysqldump: [Warning] Using a password on the command line interface can be insecure.
 -- MySQL dump 10.13  Distrib 5.7.33, for Linux (x86_64)
 --
 -- Host: localhost    Database: ishocon2
@@ -47,7 +47,8 @@ CREATE TABLE `users` (
   `mynumber` varchar(32) NOT NULL,
   `votes` int(4) NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `mynumber` (`mynumber`)
+  KEY `mynumber` (`mynumber`),
+  KEY `user__name_address_mynumber_ind` (`name`,`address`,`mynumber`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4000001 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -65,7 +66,7 @@ CREATE TABLE `votes` (
   `keyword` text NOT NULL,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=531961 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=608272 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -77,4 +78,4 @@ CREATE TABLE `votes` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-05-12  4:53:48
+-- Dump completed on 2021-05-16  9:37:10
