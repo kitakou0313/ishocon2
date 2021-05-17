@@ -8,6 +8,7 @@ import (
 	"sort"
 	"strconv"
 
+	"github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/contrib/static"
 	"github.com/gin-gonic/gin"
@@ -188,6 +189,9 @@ func main() {
 	r.GET("/health", func(c *gin.Context) {
 		c.String(http.StatusOK, "OK")
 	})
+
+	// for pprof
+	pprof.Register(r)
 
 	r.Run(":8080")
 }

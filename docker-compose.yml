@@ -11,6 +11,7 @@ services:
     ports:
       - "443:443"
       - "3306:3306"
+      - "8080:8080"
 
   bench:
     image: showwin/ishocon2_bench:latest
