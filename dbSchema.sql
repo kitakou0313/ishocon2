@@ -79,11 +79,11 @@ CREATE TABLE `votes_sum` (
   `id` int(32) NOT NULL AUTO_INCREMENT,
   `user_id` int(32) NOT NULL,
   `candidate_id` int(11) NOT NULL,
-  `keyword` text NOT NULL,
+  `keyword` mediumtext NOT NULL,
   `votes_num` int(32) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -95,4 +95,4 @@ CREATE TABLE `votes_sum` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-05-20 14:18:06
+-- Dump completed on 2021-05-20 16:00:04
