@@ -181,7 +181,7 @@ func main() {
 	})
 
 	r.GET("/initialize", func(c *gin.Context) {
-		db.Exec("DELETE FROM votes")
+		db.Exec("DELETE FROM votes_sum")
 
 		c.String(http.StatusOK, "Finish")
 	})
