@@ -17,14 +17,14 @@ func getVoteCountByCandidateID(candidateID int) (count int) {
 }
 
 func getUserVotedCount(userID int) (count int) {
-	row := db.QueryRow("SELECT COUNT(*) AS count FROM votes WHERE user_id = ?", userID)
+	row := db.QueryRow("SELECT SUM(votes_num) AS count FROM votes_sum WHERE user_id = ?", userID)
 	row.Scan(&count)
 	return
 }
 
-func createVote(userID int, candidateID int, keyword string) {
-	db.Exec("INSERT INTO votes (user_id, candidate_id, keyword) VALUES (?, ?, ?)",
-		userID, candidateID, keyword)
+func createVote(userID int, candidateID int, keyword string, voteNum int) {
+	db.Exec("INSERT INTO votes_sum (user_id, candidate_id, keyword, votes_num) VALUES (?, ?, ?, ?)",
+		userID, candidateID, keyword, voteNum)
 }
 
 func getVoiceOfSupporter(candidateIDs []int) (voices []string) {
