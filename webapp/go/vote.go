@@ -1,6 +1,8 @@
 package main
 
-import "strings"
+import (
+	"strings"
+)
 
 // Vote Model
 type Vote struct {
@@ -25,8 +27,12 @@ func getUserVotedCount(userID int) (count int) {
 }
 
 func createVote(userID int, candidateID int, keyword string, voteNum int) {
-	db.Exec("INSERT INTO votes_sum (user_id, candidate_id, keyword, votes_num) VALUES (?, ?, ?, ?)",
+	_, err := db.Exec("INSERT INTO votes_sum (user_id, candidate_id, keyword, votes_num) VALUES (?, ?, ?, ?)",
 		userID, candidateID, keyword, voteNum)
+
+	if err != nil {
+		panic(err)
+	}
 }
 
 func getVoiceOfSupporter(candidateIDs []int) (voices []string) {
