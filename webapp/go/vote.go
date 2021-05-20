@@ -34,10 +34,10 @@ func getVoiceOfSupporter(candidateIDs []int) (voices []string) {
 	}
 	rows, err := db.Query(`
     SELECT keyword
-    FROM votes
+    FROM votes_sum
     WHERE candidate_id IN (`+strings.Join(strings.Split(strings.Repeat("?", len(candidateIDs)), ""), ",")+`)
     GROUP BY keyword
-    ORDER BY COUNT(*) DESC
+    ORDER BY SUM(votes_num) DESC
     LIMIT 10`, args...)
 	if err != nil {
 		return nil
