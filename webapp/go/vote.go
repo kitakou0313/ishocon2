@@ -11,14 +11,16 @@ type Vote struct {
 }
 
 func getVoteCountByCandidateID(candidateID int) (count int) {
-	row := db.QueryRow("SELECT SUM(votes_num) AS count FROM votes_sum GROUP BY candidate_id HAVING candidate_id = ?", candidateID)
-	row.Scan(&count)
+	row := db.QueryRow("SELECT candidate_id, SUM(votes_num) AS count FROM votes_sum GROUP BY candidate_id HAVING candidate_id = ?", candidateID)
+	var id int
+	row.Scan(&id, &count)
 	return
 }
 
 func getUserVotedCount(userID int) (count int) {
-	row := db.QueryRow("SELECT SUM(votes_num) AS count FROM votes_sum GROUP BY user_id HAVING user_id = ?", userID)
-	row.Scan(&count)
+	row := db.QueryRow("SELECT user_id, SUM(votes_num) AS count FROM votes_sum GROUP BY user_id HAVING user_id = ?", userID)
+	var user_id int
+	row.Scan(&user_id, &count)
 	return
 }
 
