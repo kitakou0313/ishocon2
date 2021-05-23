@@ -23,7 +23,9 @@ type PartyElectionResult struct {
 	VoteCount      int
 }
 
-func getAllCandidate() (candidates []Candidate) {
+var allCandidatesCache []Candidate
+
+func fetchAllCandidates() {
 	rows, err := db.Query("SELECT * FROM candidates")
 	if err != nil {
 		panic(err.Error())
@@ -36,9 +38,12 @@ func getAllCandidate() (candidates []Candidate) {
 		if err != nil {
 			panic(err.Error())
 		}
-		candidates = append(candidates, c)
+		allCandidatesCache = append(allCandidatesCache, c)
 	}
-	return
+}
+
+func getAllCandidate() []Candidate {
+	return allCandidatesCache
 }
 
 func getCandidate(candidateID int) (c Candidate, err error) {

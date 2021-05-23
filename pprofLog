@@ -1,211 +1,194 @@
 (pprof) list main.
-Total: 28.23s
+Total: 27.15s
 ROUTINE ======================== main.createVote in /home/ishocon/webapp/go/vote.go
-         0      8.03s (flat, cum) 28.44% of Total
-         .          .     21:   row.Scan(&count)
-         .          .     22:   return
-         .          .     23:}
-         .          .     24:
-         .          .     25:func createVote(userID int, candidateID int, keyword string) {
-         .      8.03s     26:   db.Exec("INSERT INTO votes (user_id, candidate_id, keyword) VALUES (?, ?, ?)",
-         .          .     27:           userID, candidateID, keyword)
-         .          .     28:}
-         .          .     29:
-         .          .     30:func getVoiceOfSupporter(candidateIDs []int) (voices []string) {
-         .          .     31:   args := []interface{}{}
-ROUTINE ======================== main.getAllCandidate in /home/ishocon/webapp/go/candidate.go
-      20ms      510ms (flat, cum)  1.81% of Total
-         .          .     22:   PoliticalParty string
-         .          .     23:   VoteCount      int
-         .          .     24:}
-         .          .     25:
-         .          .     26:func getAllCandidate() (candidates []Candidate) {
-         .      280ms     27:   rows, err := db.Query("SELECT * FROM candidates")
-         .          .     28:   if err != nil {
-         .          .     29:           panic(err.Error())
-         .          .     30:   }
-         .          .     31:   defer rows.Close()
+         0      1.01s (flat, cum)  3.72% of Total
+         .          .     25:   row.Scan(&user_id, &count)
+         .          .     26:   return
+         .          .     27:}
+         .          .     28:
+         .          .     29:func createVote(userID int, candidateID int, keyword string, voteNum int) {
+         .      1.01s     30:   _, err := db.Exec("INSERT INTO votes_sum (user_id, candidate_id, keyword, votes_num) VALUES (?, ?, ?, ?)",
+         .          .     31:           userID, candidateID, keyword, voteNum)
          .          .     32:
-         .       70ms     33:   for rows.Next() {
-         .          .     34:           c := Candidate{}
-      10ms       80ms     35:           err = rows.Scan(&c.ID, &c.Name, &c.PoliticalParty, &c.Sex)
-         .          .     36:           if err != nil {
-         .          .     37:                   panic(err.Error())
-         .          .     38:           }
-      10ms       80ms     39:           candidates = append(candidates, c)
-         .          .     40:   }
-         .          .     41:   return
-         .          .     42:}
-         .          .     43:
-         .          .     44:func getCandidate(candidateID int) (c Candidate, err error) {
+         .          .     33:   if err != nil {
+         .          .     34:           panic(err)
+         .          .     35:   }
 ROUTINE ======================== main.getAllPartyName in /home/ishocon/webapp/go/candidate.go
-         0       90ms (flat, cum)  0.32% of Total
-         .          .     52:   err = row.Scan(&c.ID, &c.Name, &c.PoliticalParty, &c.Sex)
-         .          .     53:   return
-         .          .     54:}
-         .          .     55:
-         .          .     56:func getAllPartyName() (partyNames []string) {
-         .       80ms     57:   rows, err := db.Query("SELECT political_party FROM candidates GROUP BY political_party")
-         .          .     58:   if err != nil {
-         .          .     59:           panic(err.Error())
-         .          .     60:   }
-         .          .     61:   defer rows.Close()
-         .          .     62:
-         .          .     63:   for rows.Next() {
-         .          .     64:           var name string
-         .          .     65:           err = rows.Scan(&name)
-         .          .     66:           if err != nil {
-         .          .     67:                   panic(err.Error())
-         .          .     68:           }
-         .       10ms     69:           partyNames = append(partyNames, name)
-         .          .     70:   }
-         .          .     71:   return
-         .          .     72:}
-         .          .     73:
-         .          .     74:func getCandidatesByPoliticalParty(party string) (candidates []Candidate) {
+         0      130ms (flat, cum)  0.48% of Total
+         .          .     57:   err = row.Scan(&c.ID, &c.Name, &c.PoliticalParty, &c.Sex)
+         .          .     58:   return
+         .          .     59:}
+         .          .     60:
+         .          .     61:func getAllPartyName() (partyNames []string) {
+         .      130ms     62:   rows, err := db.Query("SELECT political_party FROM candidates GROUP BY political_party")
+         .          .     63:   if err != nil {
+         .          .     64:           panic(err.Error())
+         .          .     65:   }
+         .          .     66:   defer rows.Close()
+         .          .     67:
 ROUTINE ======================== main.getCandidate in /home/ishocon/webapp/go/candidate.go
-         0       20ms (flat, cum) 0.071% of Total
-         .          .     40:   }
-         .          .     41:   return
-         .          .     42:}
-         .          .     43:
-         .          .     44:func getCandidate(candidateID int) (c Candidate, err error) {
-         .       10ms     45:   row := db.QueryRow("SELECT * FROM candidates WHERE id = ?", candidateID)
-         .       10ms     46:   err = row.Scan(&c.ID, &c.Name, &c.PoliticalParty, &c.Sex)
-         .          .     47:   return
-         .          .     48:}
-         .          .     49:
-         .          .     50:func getCandidateByName(name string) (c Candidate, err error) {
-         .          .     51:   row := db.QueryRow("SELECT * FROM candidates WHERE name = ?", name)
+         0      100ms (flat, cum)  0.37% of Total
+         .          .     45:func getAllCandidate() []Candidate {
+         .          .     46:   return allCandidatesCache
+         .          .     47:}
+         .          .     48:
+         .          .     49:func getCandidate(candidateID int) (c Candidate, err error) {
+         .       80ms     50:   row := db.QueryRow("SELECT * FROM candidates WHERE id = ?", candidateID)
+         .       20ms     51:   err = row.Scan(&c.ID, &c.Name, &c.PoliticalParty, &c.Sex)
+         .          .     52:   return
+         .          .     53:}
+         .          .     54:
+         .          .     55:func getCandidateByName(name string) (c Candidate, err error) {
+         .          .     56:   row := db.QueryRow("SELECT * FROM candidates WHERE name = ?", name)
 ROUTINE ======================== main.getCandidateByName in /home/ishocon/webapp/go/candidate.go
-         0      1.04s (flat, cum)  3.68% of Total
-         .          .     46:   err = row.Scan(&c.ID, &c.Name, &c.PoliticalParty, &c.Sex)
-         .          .     47:   return
-         .          .     48:}
-         .          .     49:
-         .          .     50:func getCandidateByName(name string) (c Candidate, err error) {
-         .      700ms     51:   row := db.QueryRow("SELECT * FROM candidates WHERE name = ?", name)
-         .      340ms     52:   err = row.Scan(&c.ID, &c.Name, &c.PoliticalParty, &c.Sex)
-         .          .     53:   return
-         .          .     54:}
-         .          .     55:
-         .          .     56:func getAllPartyName() (partyNames []string) {
-         .          .     57:   rows, err := db.Query("SELECT political_party FROM candidates GROUP BY political_party")
+         0      1.75s (flat, cum)  6.45% of Total
+         .          .     51:   err = row.Scan(&c.ID, &c.Name, &c.PoliticalParty, &c.Sex)
+         .          .     52:   return
+         .          .     53:}
+         .          .     54:
+         .          .     55:func getCandidateByName(name string) (c Candidate, err error) {
+         .      1.32s     56:   row := db.QueryRow("SELECT * FROM candidates WHERE name = ?", name)
+         .      430ms     57:   err = row.Scan(&c.ID, &c.Name, &c.PoliticalParty, &c.Sex)
+         .          .     58:   return
+         .          .     59:}
+         .          .     60:
+         .          .     61:func getAllPartyName() (partyNames []string) {
+         .          .     62:   rows, err := db.Query("SELECT political_party FROM candidates GROUP BY political_party")
+ROUTINE ======================== main.getCandidatesByPoliticalParty in /home/ishocon/webapp/go/candidate.go
+         0       70ms (flat, cum)  0.26% of Total
+         .          .     75:   }
+         .          .     76:   return
+         .          .     77:}
+         .          .     78:
+         .          .     79:func getCandidatesByPoliticalParty(party string) (candidates []Candidate) {
+         .       50ms     80:   rows, err := db.Query("SELECT * FROM candidates WHERE political_party = ?", party)
+         .          .     81:   if err != nil {
+         .          .     82:           panic(err.Error())
+         .          .     83:   }
+         .          .     84:   defer rows.Close()
+         .          .     85:
+         .       20ms     86:   for rows.Next() {
+         .          .     87:           c := Candidate{}
+         .          .     88:           err = rows.Scan(&c.ID, &c.Name, &c.PoliticalParty, &c.Sex)
+         .          .     89:           if err != nil {
+         .          .     90:                   panic(err.Error())
+         .          .     91:           }
 ROUTINE ======================== main.getElectionResult in /home/ishocon/webapp/go/candidate.go
-         0       80ms (flat, cum)  0.28% of Total
-         .          .     88:   }
-         .          .     89:   return
-         .          .     90:}
-         .          .     91:
-         .          .     92:func getElectionResult() (result []CandidateElectionResult) {
-         .       30ms     93:   rows, err := db.Query(`
-         .          .     94:           SELECT c.id, c.name, c.political_party, c.sex, IFNULL(v.count, 0)
-         .          .     95:           FROM candidates AS c
-         .          .     96:           LEFT OUTER JOIN
-         .          .     97:           (SELECT candidate_id, COUNT(*) AS count
-         .          .     98:           FROM votes
-         .          .     99:           GROUP BY candidate_id) AS v
-         .          .    100:           ON c.id = v.candidate_id
-         .          .    101:           ORDER BY v.count DESC`)
-         .          .    102:   if err != nil {
-         .          .    103:           panic(err.Error())
-         .          .    104:   }
-         .          .    105:   defer rows.Close()
-         .          .    106:
-         .       20ms    107:   for rows.Next() {
-         .          .    108:           r := CandidateElectionResult{}
-         .       20ms    109:           err = rows.Scan(&r.ID, &r.Name, &r.PoliticalParty, &r.Sex, &r.VoteCount)
-         .          .    110:           if err != nil {
-         .          .    111:                   panic(err.Error())
-         .          .    112:           }
-         .       10ms    113:           result = append(result, r)
-         .          .    114:   }
-         .          .    115:   return
-         .          .    116:}
+         0      270ms (flat, cum)  0.99% of Total
+         .          .     93:   }
+         .          .     94:   return
+         .          .     95:}
+         .          .     96:
+         .          .     97:func getElectionResult() (result []CandidateElectionResult) {
+         .      180ms     98:   rows, err := db.Query(`
+         .          .     99:           SELECT c.id, c.name, c.political_party, c.sex, IFNULL(v.count, 0)
+         .          .    100:           FROM candidates AS c
+         .          .    101:           LEFT OUTER JOIN
+         .          .    102:           (SELECT candidate_id, SUM(votes_num) AS count
+         .          .    103:           FROM votes_sum
+         .          .    104:           GROUP BY candidate_id) AS v
+         .          .    105:           ON c.id = v.candidate_id
+         .          .    106:           ORDER BY v.count DESC`)
+         .          .    107:   if err != nil {
+         .          .    108:           panic(err.Error())
+         .          .    109:   }
+         .          .    110:   defer rows.Close()
+         .          .    111:
+         .       70ms    112:   for rows.Next() {
+         .       10ms    113:           r := CandidateElectionResult{}
+         .       10ms    114:           err = rows.Scan(&r.ID, &r.Name, &r.PoliticalParty, &r.Sex, &r.VoteCount)
+         .          .    115:           if err != nil {
+         .          .    116:                   panic(err.Error())
+         .          .    117:           }
+         .          .    118:           result = append(result, r)
+         .          .    119:   }
 ROUTINE ======================== main.getUser in /home/ishocon/webapp/go/user.go
-         0      1.21s (flat, cum)  4.29% of Total
+         0      1.90s (flat, cum)  7.00% of Total
+         .          .      7:   Address  string
          .          .      8:   MyNumber string
          .          .      9:   Votes    int
          .          .     10:}
          .          .     11:
-         .          .     12:func getUser(name string, address string, myNumber string) (user User, err error) {
-         .      910ms     13:   row := db.QueryRow("SELECT * FROM users WHERE mynumber = ? AND name = ? AND address = ?",
+         .       20ms     12:func getUser(name string, address string, myNumber string) (user User, err error) {
+         .      1.38s     13:   row := db.QueryRow("SELECT * FROM users WHERE mynumber = ? AND name = ? AND address = ?",
          .          .     14:           myNumber, name, address)
-         .      300ms     15:   err = row.Scan(&user.ID, &user.Name, &user.Address, &user.MyNumber, &user.Votes)
+         .      500ms     15:   err = row.Scan(&user.ID, &user.Name, &user.Address, &user.MyNumber, &user.Votes)
          .          .     16:   return
          .          .     17:}
 ROUTINE ======================== main.getUserVotedCount in /home/ishocon/webapp/go/vote.go
-         0      1.02s (flat, cum)  3.61% of Total
-         .          .     15:   row.Scan(&count)
-         .          .     16:   return
-         .          .     17:}
-         .          .     18:
-         .          .     19:func getUserVotedCount(userID int) (count int) {
-         .      690ms     20:   row := db.QueryRow("SELECT COUNT(*) AS count FROM votes WHERE user_id = ?", userID)
-         .      330ms     21:   row.Scan(&count)
-         .          .     22:   return
-         .          .     23:}
-         .          .     24:
-         .          .     25:func createVote(userID int, candidateID int, keyword string) {
-         .          .     26:   db.Exec("INSERT INTO votes (user_id, candidate_id, keyword) VALUES (?, ?, ?)",
+      10ms      1.53s (flat, cum)  5.64% of Total
+         .          .     18:   row.Scan(&id, &count)
+         .          .     19:   return
+         .          .     20:}
+         .          .     21:
+         .          .     22:func getUserVotedCount(userID int) (count int) {
+         .      1.15s     23:   row := db.QueryRow("SELECT user_id, SUM(votes_num) AS count FROM votes_sum GROUP BY user_id HAVING user_id = ?", userID)
+         .          .     24:   var user_id int
+         .      370ms     25:   row.Scan(&user_id, &count)
+      10ms       10ms     26:   return
+         .          .     27:}
+         .          .     28:
+         .          .     29:func createVote(userID int, candidateID int, keyword string, voteNum int) {
+         .          .     30:   _, err := db.Exec("INSERT INTO votes_sum (user_id, candidate_id, keyword, votes_num) VALUES (?, ?, ?, ?)",
+         .          .     31:           userID, candidateID, keyword, voteNum)
 ROUTINE ======================== main.getVoiceOfSupporter in /home/ishocon/webapp/go/vote.go
-         0       90ms (flat, cum)  0.32% of Total
-         .          .     30:func getVoiceOfSupporter(candidateIDs []int) (voices []string) {
-         .          .     31:   args := []interface{}{}
-         .          .     32:   for _, candidateID := range candidateIDs {
-         .          .     33:           args = append(args, candidateID)
-         .          .     34:   }
-         .       60ms     35:   rows, err := db.Query(`
-         .          .     36:    SELECT keyword
-         .          .     37:    FROM votes
-         .          .     38:    WHERE candidate_id IN (`+strings.Join(strings.Split(strings.Repeat("?", len(candidateIDs)), ""), ",")+`)
-         .          .     39:    GROUP BY keyword
-         .          .     40:    ORDER BY COUNT(*) DESC
-         .          .     41:    LIMIT 10`, args...)
-         .          .     42:   if err != nil {
-         .          .     43:           return nil
-         .          .     44:   }
-         .          .     45:
-         .          .     46:   defer rows.Close()
-         .       20ms     47:   for rows.Next() {
-         .          .     48:           var keyword string
-         .       10ms     49:           err = rows.Scan(&keyword)
-         .          .     50:           if err != nil {
-         .          .     51:                   panic(err.Error())
-         .          .     52:           }
-         .          .     53:           voices = append(voices, keyword)
-         .          .     54:   }
+         0      130ms (flat, cum)  0.48% of Total
+         .          .     38:func getVoiceOfSupporter(candidateIDs []int) (voices []string) {
+         .          .     39:   args := []interface{}{}
+         .          .     40:   for _, candidateID := range candidateIDs {
+         .          .     41:           args = append(args, candidateID)
+         .          .     42:   }
+         .       90ms     43:   rows, err := db.Query(`
+         .          .     44:    SELECT keyword
+         .          .     45:    FROM votes_sum
+         .          .     46:    WHERE candidate_id IN (`+strings.Join(strings.Split(strings.Repeat("?", len(candidateIDs)), ""), ",")+`)
+         .          .     47:    GROUP BY keyword
+         .          .     48:    ORDER BY SUM(votes_num) DESC
+         .          .     49:    LIMIT 10`, args...)
+         .          .     50:   if err != nil {
+         .          .     51:           return nil
+         .          .     52:   }
+         .          .     53:
+         .          .     54:   defer rows.Close()
+         .       40ms     55:   for rows.Next() {
+         .          .     56:           var keyword string
+         .          .     57:           err = rows.Scan(&keyword)
+         .          .     58:           if err != nil {
+         .          .     59:                   panic(err.Error())
+         .          .     60:           }
 ROUTINE ======================== main.getVoteCountByCandidateID in /home/ishocon/webapp/go/vote.go
-         0       30ms (flat, cum)  0.11% of Total
-         .          .      9:   CandidateID int
-         .          .     10:   Keyword     string
-         .          .     11:}
-         .          .     12:
-         .          .     13:func getVoteCountByCandidateID(candidateID int) (count int) {
-         .       30ms     14:   row := db.QueryRow("SELECT COUNT(*) AS count FROM votes WHERE candidate_id = ?", candidateID)
-         .          .     15:   row.Scan(&count)
-         .          .     16:   return
-         .          .     17:}
-         .          .     18:
-         .          .     19:func getUserVotedCount(userID int) (count int) {
+         0      130ms (flat, cum)  0.48% of Total
+         .          .     11:   CandidateID int
+         .          .     12:   Keyword     string
+         .          .     13:}
+         .          .     14:
+         .          .     15:func getVoteCountByCandidateID(candidateID int) (count int) {
+         .      100ms     16:   row := db.QueryRow("SELECT candidate_id, SUM(votes_num) AS count FROM votes_sum GROUP BY candidate_id HAVING candidate_id = ?", candidateID)
+         .          .     17:   var id int
+         .       30ms     18:   row.Scan(&id, &count)
+         .          .     19:   return
+         .          .     20:}
+         .          .     21:
+         .          .     22:func getUserVotedCount(userID int) (count int) {
+         .          .     23:   row := db.QueryRow("SELECT user_id, SUM(votes_num) AS count FROM votes_sum GROUP BY user_id HAVING user_id = ?", userID)
 ROUTINE ======================== main.main in /home/ishocon/webapp/go/main.go
-         0      610ms (flat, cum)  2.16% of Total
-         .          .    191:   })
-         .          .    192:
-         .          .    193:   // for pprof
-         .          .    194:   pprof.Register(r)
-         .          .    195:
-         .      610ms    196:   r.Run(":8080")
-         .          .    197:}
+         0      760ms (flat, cum)  2.80% of Total
+         .          .    189:   })
+         .          .    190:
+         .          .    191:   // for pprof
+         .          .    192:   pprof.Register(r)
+         .          .    193:
+         .      760ms    194:   r.Run(":8080")
+         .          .    195:}
 ROUTINE ======================== main.main.func1 in /home/ishocon/webapp/go/main.go
-         0      810ms (flat, cum)  2.87% of Total
+      10ms      1.79s (flat, cum)  6.59% of Total
          .          .     41:   store := sessions.NewCookieStore([]byte("mysession"))
          .          .     42:   store.Options(sessions.Options{HttpOnly: true})
          .          .     43:   r.Use(sessions.Sessions("showwin_happy", store))
          .          .     44:
          .          .     45:   // GET /
-         .       20ms     46:   r.GET("/", func(c *gin.Context) {
-         .       80ms     47:           electionResults := getElectionResult()
+         .       40ms     46:   r.GET("/", func(c *gin.Context) {
+         .      240ms     47:           electionResults := getElectionResult()
          .          .     48:
          .          .     49:           // 上位10人と最下位のみ表示
          .       20ms     50:           tmp := make([]CandidateElectionResult, len(electionResults))
@@ -213,97 +196,109 @@ ROUTINE ======================== main.main.func1 in /home/ishocon/webapp/go/main
          .          .     52:           candidates := tmp[:10]
          .          .     53:           candidates = append(candidates, tmp[len(tmp)-1])
          .          .     54:
-         .       90ms     55:           partyNames := getAllPartyName()
+         .      130ms     55:           partyNames := getAllPartyName()
          .          .     56:           partyResultMap := map[string]int{}
          .          .     57:           for _, name := range partyNames {
-         .          .     58:                   partyResultMap[name] = 0
+         .       10ms     58:                   partyResultMap[name] = 0
          .          .     59:           }
          .          .     60:           for _, r := range electionResults {
-         .          .     61:                   partyResultMap[r.PoliticalParty] += r.VoteCount
+         .       10ms     61:                   partyResultMap[r.PoliticalParty] += r.VoteCount
          .          .     62:           }
          .          .     63:           partyResults := []PartyElectionResult{}
-         .          .     64:           for name, count := range partyResultMap {
+         .       10ms     64:           for name, count := range partyResultMap {
          .          .     65:                   r := PartyElectionResult{}
          .          .     66:                   r.PoliticalParty = name
          .          .     67:                   r.VoteCount = count
          .          .     68:                   partyResults = append(partyResults, r)
          .          .     69:           }
          .          .     70:           // 投票数でソート
-         .       20ms     71:           sort.Slice(partyResults, func(i, j int) bool { return partyResults[i].VoteCount > partyResults[j].VoteCount })
+         .          .     71:           sort.Slice(partyResults, func(i, j int) bool { return partyResults[i].VoteCount > partyResults[j].VoteCount })
          .          .     72:
          .          .     73:           sexRatio := map[string]int{
-         .          .     74:                   "men":   0,
+         .       10ms     74:                   "men":   0,
          .          .     75:                   "women": 0,
          .          .     76:           }
          .          .     77:           for _, r := range electionResults {
-         .          .     78:                   if r.Sex == "男" {
+      10ms       10ms     78:                   if r.Sex == "男" {
          .          .     79:                           sexRatio["men"] += r.VoteCount
          .          .     80:                   } else if r.Sex == "女" {
-         .          .     81:                           sexRatio["women"] += r.VoteCount
+         .       20ms     81:                           sexRatio["women"] += r.VoteCount
          .          .     82:                   }
          .          .     83:           }
          .          .     84:
          .          .     85:           funcs := template.FuncMap{"indexPlus1": func(i int) int { return i + 1 }}
-         .      180ms     86:           r.SetHTMLTemplate(template.Must(template.New("main").Funcs(funcs).ParseFiles(layout, "templates/index.tmpl")))
-         .      400ms     87:           c.HTML(http.StatusOK, "base", gin.H{
+         .      490ms     86:           r.SetHTMLTemplate(template.Must(template.New("main").Funcs(funcs).ParseFiles(layout, "templates/index.tmpl")))
+         .      800ms     87:           c.HTML(http.StatusOK, "base", gin.H{
          .          .     88:                   "candidates": candidates,
          .          .     89:                   "parties":    partyResults,
          .          .     90:                   "sexRatio":   sexRatio,
          .          .     91:           })
          .          .     92:   })
 ROUTINE ======================== main.main.func2 in /home/ishocon/webapp/go/main.go
-         0      160ms (flat, cum)  0.57% of Total
+         0      430ms (flat, cum)  1.58% of Total
          .          .     92:   })
          .          .     93:
          .          .     94:   // GET /candidates/:candidateID(int)
          .          .     95:   r.GET("/candidates/:candidateID", func(c *gin.Context) {
          .          .     96:           candidateID, _ := strconv.Atoi(c.Param("candidateID"))
-         .       20ms     97:           candidate, err := getCandidate(candidateID)
+         .      100ms     97:           candidate, err := getCandidate(candidateID)
          .          .     98:           if err != nil {
          .          .     99:                   c.Redirect(http.StatusFound, "/")
          .          .    100:           }
-         .       30ms    101:           votes := getVoteCountByCandidateID(candidateID)
+         .      130ms    101:           votes := getVoteCountByCandidateID(candidateID)
          .          .    102:           candidateIDs := []int{candidateID}
-         .       80ms    103:           keywords := getVoiceOfSupporter(candidateIDs)
+         .       70ms    103:           keywords := getVoiceOfSupporter(candidateIDs)
          .          .    104:
-         .       10ms    105:           r.SetHTMLTemplate(template.Must(template.ParseFiles(layout, "templates/candidate.tmpl")))
-         .       20ms    106:           c.HTML(http.StatusOK, "base", gin.H{
+         .       70ms    105:           r.SetHTMLTemplate(template.Must(template.ParseFiles(layout, "templates/candidate.tmpl")))
+         .       60ms    106:           c.HTML(http.StatusOK, "base", gin.H{
          .          .    107:                   "candidate": candidate,
          .          .    108:                   "votes":     votes,
          .          .    109:                   "keywords":  keywords,
          .          .    110:           })
          .          .    111:   })
 ROUTINE ======================== main.main.func3 in /home/ishocon/webapp/go/main.go
-         0       30ms (flat, cum)  0.11% of Total
-         .          .    124:           candidates := getCandidatesByPoliticalParty(partyName)
+         0      330ms (flat, cum)  1.22% of Total
+         .          .    112:
+         .          .    113:   // GET /political_parties/:name(string)
+         .          .    114:   r.GET("/political_parties/:name", func(c *gin.Context) {
+         .          .    115:           partyName := c.Param("name")
+         .          .    116:           var votes int
+         .       30ms    117:           electionResults := getElectionResult()
+         .          .    118:           for _, r := range electionResults {
+         .          .    119:                   if r.PoliticalParty == partyName {
+         .          .    120:                           votes += r.VoteCount
+         .          .    121:                   }
+         .          .    122:           }
+         .          .    123:
+         .       70ms    124:           candidates := getCandidatesByPoliticalParty(partyName)
          .          .    125:           candidateIDs := []int{}
          .          .    126:           for _, c := range candidates {
          .          .    127:                   candidateIDs = append(candidateIDs, c.ID)
          .          .    128:           }
-         .       10ms    129:           keywords := getVoiceOfSupporter(candidateIDs)
+         .       60ms    129:           keywords := getVoiceOfSupporter(candidateIDs)
          .          .    130:
-         .          .    131:           r.SetHTMLTemplate(template.Must(template.ParseFiles(layout, "templates/political_party.tmpl")))
-         .       20ms    132:           c.HTML(http.StatusOK, "base", gin.H{
+         .      100ms    131:           r.SetHTMLTemplate(template.Must(template.ParseFiles(layout, "templates/political_party.tmpl")))
+         .       70ms    132:           c.HTML(http.StatusOK, "base", gin.H{
          .          .    133:                   "politicalParty": partyName,
          .          .    134:                   "votes":          votes,
          .          .    135:                   "candidates":     candidates,
          .          .    136:                   "keywords":       keywords,
          .          .    137:           })
 ROUTINE ======================== main.main.func5 in /home/ishocon/webapp/go/main.go
-      10ms     15.74s (flat, cum) 55.76% of Total
+         0     11.70s (flat, cum) 43.09% of Total
          .          .    148:           })
          .          .    149:   })
          .          .    150:
          .          .    151:   // POST /vote
          .          .    152:   r.POST("/vote", func(c *gin.Context) {
-         .      1.58s    153:           user, userErr := getUser(c.PostForm("name"), c.PostForm("address"), c.PostForm("mynumber"))
-         .      1.04s    154:           candidate, cndErr := getCandidateByName(c.PostForm("candidate"))
-         .      1.02s    155:           votedCount := getUserVotedCount(user.ID)
-         .      510ms    156:           candidates := getAllCandidate()
-         .       10ms    157:           voteCount, _ := strconv.Atoi(c.PostForm("vote_count"))
+         .      2.44s    153:           user, userErr := getUser(c.PostForm("name"), c.PostForm("address"), c.PostForm("mynumber"))
+         .      1.77s    154:           candidate, cndErr := getCandidateByName(c.PostForm("candidate"))
+         .      1.53s    155:           votedCount := getUserVotedCount(user.ID)
+         .          .    156:           candidates := getAllCandidate()
+         .       20ms    157:           voteCount, _ := strconv.Atoi(c.PostForm("vote_count"))
          .          .    158:
          .          .    159:           var message string
-         .      1.47s    160:           r.SetHTMLTemplate(template.Must(template.ParseFiles(layout, "templates/vote.tmpl")))
+         .      1.88s    160:           r.SetHTMLTemplate(template.Must(template.ParseFiles(layout, "templates/vote.tmpl")))
          .          .    161:           if userErr != nil {
          .          .    162:                   message = "個人情報に誤りがあります"
          .          .    163:           } else if user.Votes < voteCount+votedCount {
@@ -315,16 +310,14 @@ ROUTINE ======================== main.main.func5 in /home/ishocon/webapp/go/main
          .          .    169:           } else if c.PostForm("keyword") == "" {
          .          .    170:                   message = "投票理由を記入してください"
          .          .    171:           } else {
-      10ms       10ms    172:                   for i := 1; i <= voteCount; i++ {
-         .      8.07s    173:                           createVote(user.ID, candidate.ID, c.PostForm("keyword"))
-         .          .    174:                   }
-         .          .    175:                   message = "投票に成功しました"
-         .          .    176:           }
-         .      2.02s    177:           c.HTML(http.StatusOK, "base", gin.H{
-         .          .    178:                   "candidates": candidates,
-         .       10ms    179:                   "message":    message,
-         .          .    180:           })
-         .          .    181:   })
-         .          .    182:
-         .          .    183:   r.GET("/initialize", func(c *gin.Context) {
-         .          .    184:           db.Exec("DELETE FROM votes")
+         .      1.01s    172:                   createVote(user.ID, candidate.ID, c.PostForm("keyword"), voteCount)
+         .          .    173:                   message = "投票に成功しました"
+         .          .    174:           }
+         .      3.04s    175:           c.HTML(http.StatusOK, "base", gin.H{
+         .          .    176:                   "candidates": candidates,
+         .       10ms    177:                   "message":    message,
+         .          .    178:           })
+         .          .    179:   })
+         .          .    180:
+         .          .    181:   r.GET("/initialize", func(c *gin.Context) {
+         .          .    182:           db.Exec("DELETE FROM votes_sum")

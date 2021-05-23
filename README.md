@@ -15,5 +15,5 @@ mysql> select table_name, table_rows from information_schema.TABLES where table_
 最新スコア
 
 ```
-2021/05/20 16:03:35 {"score": 25692, "success": 19396, "failure": 0}
+2021/05/23 12:38:30 {"score": 26086, "success": 19518, "failure": 0}
 ```
