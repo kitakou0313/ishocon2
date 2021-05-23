@@ -180,7 +180,7 @@ func main() {
 
 	r.GET("/initialize", func(c *gin.Context) {
 		db.Exec("DELETE FROM votes_sum")
-
+		fetchAllCandidates()
 		c.String(http.StatusOK, "Finish")
 	})
 
