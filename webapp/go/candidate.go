@@ -1,5 +1,7 @@
 package main
 
+import "errors"
+
 // Candidate Model
 type Candidate struct {
 	ID             int
@@ -28,6 +30,9 @@ var idToCandidatesCache map[int]Candidate
 var nameToCandidatesCache map[string]Candidate
 
 func fetchAllCandidates() {
+	idToCandidatesCache = map[int]Candidate{}
+	nameToCandidatesCache = map[string]Candidate{}
+
 	rows, err := db.Query("SELECT * FROM candidates")
 	if err != nil {
 		panic(err.Error())
@@ -55,6 +60,10 @@ func getCandidate(candidateID int) (Candidate, error) {
 }
 
 func getCandidateByName(name string) (Candidate, error) {
+	if _, ok := nameToCandidatesCache[name]; !ok {
+		return Candidate{}, errors.New("There is not candidate")
+	}
+
 	return nameToCandidatesCache[name], nil
 }
 

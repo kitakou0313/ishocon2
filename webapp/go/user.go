@@ -14,6 +14,8 @@ type User struct {
 var myNumberToUserCache map[string]User
 
 func cacheAllUsers() {
+	myNumberToUserCache = map[string]User{}
+
 	rows, err := db.Query("SELECT * FROM users")
 	if err != nil {
 		panic(err.Error())
@@ -26,16 +28,16 @@ func cacheAllUsers() {
 		if err != nil {
 			panic(err.Error())
 		}
-
-		myNumberToUserCache[u.MyNumber] = u
-
+		key := u.Name + u.Address + u.MyNumber
+		myNumberToUserCache[key] = u
 	}
 
 }
 
 func getUser(name string, address string, myNumber string) (User, error) {
-	if _, ok := myNumberToUserCache[myNumber]; ok {
+	key := name + address + myNumber
+	if _, ok := myNumberToUserCache[key]; !ok {
 		return User{}, errors.New("There is not user with mynumber")
 	}
-	return myNumberToUserCache[myNumber], nil
+	return myNumberToUserCache[key], nil
 }
