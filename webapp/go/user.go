@@ -1,5 +1,7 @@
 package main
 
+import "errors"
+
 // User Model
 type User struct {
 	ID       int
@@ -9,9 +11,33 @@ type User struct {
 	Votes    int
 }
 
-func getUser(name string, address string, myNumber string) (user User, err error) {
-	row := db.QueryRow("SELECT * FROM users WHERE mynumber = ? AND name = ? AND address = ?",
-		myNumber, name, address)
-	err = row.Scan(&user.ID, &user.Name, &user.Address, &user.MyNumber, &user.Votes)
-	return
+var myNumberToUserCache map[string]User
+
+func cacheAllUsers() {
+	myNumberToUserCache = map[string]User{}
+
+	rows, err := db.Query("SELECT * FROM users")
+	if err != nil {
+		panic(err.Error())
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		u := User{}
+		err = rows.Scan(&u.ID, &u.Name, &u.Address, &u.MyNumber, &u.Votes)
+		if err != nil {
+			panic(err.Error())
+		}
+		key := u.Name + u.Address + u.MyNumber
+		myNumberToUserCache[key] = u
+	}
+
+}
+
+func getUser(name string, address string, myNumber string) (User, error) {
+	key := name + address + myNumber
+	if _, ok := myNumberToUserCache[key]; !ok {
+		return User{}, errors.New("There is not user with mynumber")
+	}
+	return myNumberToUserCache[key], nil
 }

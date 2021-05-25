@@ -181,6 +181,7 @@ func main() {
 	r.GET("/initialize", func(c *gin.Context) {
 		db.Exec("DELETE FROM votes_sum")
 		fetchAllCandidates()
+		cacheAllUsers()
 		c.String(http.StatusOK, "Finish")
 	})
 
