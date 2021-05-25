@@ -24,6 +24,8 @@ type PartyElectionResult struct {
 }
 
 var allCandidatesCache []Candidate
+var idToCandidatesCache map[int]Candidate
+var nameToCandidatesCache map[string]Candidate
 
 func fetchAllCandidates() {
 	rows, err := db.Query("SELECT * FROM candidates")
@@ -39,6 +41,8 @@ func fetchAllCandidates() {
 			panic(err.Error())
 		}
 		allCandidatesCache = append(allCandidatesCache, c)
+		idToCandidatesCache[c.ID] = c
+		nameToCandidatesCache[c.Name] = c
 	}
 }
 
@@ -46,16 +50,12 @@ func getAllCandidate() []Candidate {
 	return allCandidatesCache
 }
 
-func getCandidate(candidateID int) (c Candidate, err error) {
-	row := db.QueryRow("SELECT * FROM candidates WHERE id = ?", candidateID)
-	err = row.Scan(&c.ID, &c.Name, &c.PoliticalParty, &c.Sex)
-	return
+func getCandidate(candidateID int) (Candidate, error) {
+	return idToCandidatesCache[candidateID], nil
 }
 
-func getCandidateByName(name string) (c Candidate, err error) {
-	row := db.QueryRow("SELECT * FROM candidates WHERE name = ?", name)
-	err = row.Scan(&c.ID, &c.Name, &c.PoliticalParty, &c.Sex)
-	return
+func getCandidateByName(name string) (Candidate, error) {
+	return nameToCandidatesCache[name], nil
 }
 
 func getAllPartyName() (partyNames []string) {
