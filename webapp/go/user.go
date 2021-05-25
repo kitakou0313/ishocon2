@@ -9,9 +9,28 @@ type User struct {
 	Votes    int
 }
 
+var myNumberToUserCache map[string]User
+
+func cacheAllUsers() {
+	rows, err := db.Query("SELECT * FROM users")
+	if err != nil {
+		panic(err.Error())
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		u := User{}
+		err = rows.Scan(&u.ID, &u.Name, &u.Address, &u.MyNumber, &u.Votes)
+		if err != nil {
+			panic(err.Error())
+		}
+
+		myNumberToUserCache[u.MyNumber] = u
+
+	}
+
+}
+
 func getUser(name string, address string, myNumber string) (user User, err error) {
-	row := db.QueryRow("SELECT * FROM users WHERE mynumber = ? AND name = ? AND address = ?",
-		myNumber, name, address)
-	err = row.Scan(&user.ID, &user.Name, &user.Address, &user.MyNumber, &user.Votes)
-	return
+	return myNumberToUserCache[myNumber], nil
 }
