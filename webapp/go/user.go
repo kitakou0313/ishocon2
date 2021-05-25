@@ -1,5 +1,7 @@
 package main
 
+import "errors"
+
 // User Model
 type User struct {
 	ID       int
@@ -31,6 +33,9 @@ func cacheAllUsers() {
 
 }
 
-func getUser(name string, address string, myNumber string) (user User, err error) {
+func getUser(name string, address string, myNumber string) (User, error) {
+	if _, ok := myNumberToUserCache[myNumber]; ok {
+		return User{}, errors.New("There is not user with mynumber")
+	}
 	return myNumberToUserCache[myNumber], nil
 }
