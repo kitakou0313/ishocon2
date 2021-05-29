@@ -1,2 +1,2 @@
-cp ./myconfigs/nginx.conf /etc/nginx/nginx.conf
+cp ../myconfigs/nginx.conf /etc/nginx/nginx.conf
 service nginx restart
