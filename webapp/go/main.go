@@ -182,6 +182,7 @@ func main() {
 		db.Exec("DELETE FROM votes_sum")
 		fetchAllCandidates()
 		cacheAllUsers()
+		cacheAllPartyName()
 		c.String(http.StatusOK, "Finish")
 	})
 

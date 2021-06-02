@@ -67,7 +67,9 @@ func getCandidateByName(name string) (Candidate, error) {
 	return nameToCandidatesCache[name], nil
 }
 
-func getAllPartyName() (partyNames []string) {
+var allPartyNameCache []string
+
+func cacheAllPartyName() {
 	rows, err := db.Query("SELECT political_party FROM candidates GROUP BY political_party")
 	if err != nil {
 		panic(err.Error())
@@ -80,9 +82,13 @@ func getAllPartyName() (partyNames []string) {
 		if err != nil {
 			panic(err.Error())
 		}
-		partyNames = append(partyNames, name)
+		allPartyNameCache = append(allPartyNameCache, name)
 	}
 	return
+}
+
+func getAllPartyName() (partyNames []string) {
+	return allPartyNameCache
 }
 
 func getCandidatesByPoliticalParty(party string) (candidates []Candidate) {
